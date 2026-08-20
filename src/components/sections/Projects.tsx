@@ -191,7 +191,7 @@ export function Projects() {
                   Ver proyecto →
                 </a>
               ) : selected.internal ? (
-                <div className="text-[13px] font-semibold text-ink-dim">Proyecto empresarial interno</div>
+                <div className="text-[13px] font-semibold text-ink-faint">Proyecto empresarial interno</div>
               ) : null}
             </motion.div>
           </motion.div>

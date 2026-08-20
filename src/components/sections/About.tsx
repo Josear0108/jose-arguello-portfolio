@@ -27,9 +27,9 @@ export function About() {
           <Eyebrow icon={PERSON_ICON}>Sobre mí</Eyebrow>
         </div>
 
-        <p className="m-0 mb-[clamp(40px,5vw,60px)] max-w-[900px] font-display text-[clamp(26px,3.4vw,44px)] leading-[1.18] font-extrabold tracking-[-0.02em] text-ink-strong text-pretty">
+        <h2 className="m-0 mb-[clamp(40px,5vw,60px)] max-w-[900px] font-display text-[clamp(26px,3.4vw,44px)] leading-[1.18] font-extrabold tracking-[-0.02em] text-ink-strong text-pretty">
           Cuatro años construyendo productos donde el código y el diseño no se turnan — trabajan juntos.
-        </p>
+        </h2>
 
         <div className="grid grid-cols-1 items-start gap-[clamp(40px,7vw,100px)] min-[861px]:grid-cols-[1.45fr_1fr]">
           <div className="flex flex-col gap-5">
@@ -47,7 +47,7 @@ export function About() {
           <div className="flex flex-col divide-y divide-white/[0.07]">
             {facts.map((fact) => (
               <div key={fact.label} className="py-4 first:pt-0">
-                <div className="mb-[7px] text-[11.5px] font-bold tracking-[0.09em] text-ink-dim uppercase">{fact.label}</div>
+                <div className="mb-[7px] text-[11.5px] font-bold tracking-[0.09em] text-ink-faint uppercase">{fact.label}</div>
                 <div className="text-[14.5px] leading-[1.55] text-ink-soft">{fact.value}</div>
               </div>
             ))}
