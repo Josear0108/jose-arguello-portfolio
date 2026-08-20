@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+
+<helmet>
+<style>
+  @keyframes jmaPulseCenter { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.07); } }
+  @keyframes jmaTwinkle { 0%, 100% { opacity: 0.15; } 50% { opacity: 0.55; } }
+  @keyframes jmaSlowSpin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+  @media (prefers-reduced-motion: reduce) {
+    .jma-orch-anim { animation: none !important; }
+  }
+</style>
+</helmet>
+<svg viewBox="0 0 {{ size }} {{ size }}" width="100%" height="100%" style="display:block; overflow:visible;">
+  <defs>
+    <radialGradient id="jmaCenterGrad" cx="50%" cy="45%" r="65%">
+      <stop offset="0%" stop-color="#B4A8FF"></stop>
+      <stop offset="100%" stop-color="{{ accent }}"></stop>
+    </radialGradient>
+    <filter id="jmaGlow" x="-80%" y="-80%" width="260%" height="260%">
+      <feGaussianBlur stdDeviation="{{ glowBlur }}" result="blur"></feGaussianBlur>
+      <feMerge>
+        <feMergeNode in="blur"></feMergeNode>
+        <feMergeNode in="SourceGraphic"></feMergeNode>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <circle cx="{{ cx }}" cy="{{ cy }}" r="{{ depthR1 }}" fill="none" stroke="{{ accent }}" stroke-opacity="0.08" stroke-width="1"></circle>
+  <g class="jma-orch-anim" style="transform-origin:{{ cx }}px {{ cy }}px; animation: jmaSlowSpin 90s linear infinite;">
+    <circle cx="{{ cx }}" cy="{{ cy }}" r="{{ depthR2 }}" fill="none" stroke="{{ accent }}" stroke-opacity="0.14" stroke-width="1" stroke-dasharray="2 10"></circle>
+  </g>
+
+  <sc-if value="{{ animate }}" hint-placeholder-val="{{ true }}">
+    <sc-for list="{{ particles }}" as="p" hint-placeholder-count="10">
+      <circle class="jma-orch-anim" cx="{{ p.x }}" cy="{{ p.y }}" r="{{ p.r }}" fill="{{ accent }}" style="animation: jmaTwinkle {{ p.dur }} ease-in-out infinite; animation-delay:{{ p.delay }};"></circle>
+    </sc-for>
+  </sc-if>
+
+  <sc-for list="{{ nodes }}" as="node" hint-placeholder-count="5">
+    <line x1="{{ cx }}" y1="{{ cy }}" x2="{{ node.x }}" y2="{{ node.y }}" stroke="rgba(255,255,255,0.08)" stroke-width="1"></line>
+  </sc-for>
+
+  <sc-if value="{{ animate }}" hint-placeholder-val="{{ true }}">
+    <sc-for list="{{ nodes }}" as="node" hint-placeholder-count="5">
+      <circle r="3.2" fill="{{ accent }}" filter="url(#jmaGlow)">
+        <animateMotion path="{{ node.pulsePath }}" dur="{{ node.pulseDur }}" begin="{{ node.pulseBegin }}" repeatCount="indefinite"></animateMotion>
+        <animate attributeName="opacity" values="0;1;1;0" keyTimes="0;0.12;0.82;1" dur="{{ node.pulseDur }}" begin="{{ node.pulseBegin }}" repeatCount="indefinite"></animate>
+      </circle>
+    </sc-for>
+  </sc-if>
+
+  <sc-for list="{{ nodes }}" as="node" hint-placeholder-count="5">
+    <g>
+      <circle cx="{{ node.x }}" cy="{{ node.y }}" r="{{ nodeOuterR }}" fill="{{ accent }}" opacity="0.08"></circle>
+      <circle cx="{{ node.x }}" cy="{{ node.y }}" r="{{ nodeRadius }}" fill="#15151A" stroke="rgba(255,255,255,0.16)" stroke-width="1.5"></circle>
+      <sc-if value="{{ animate }}" hint-placeholder-val="{{ true }}">
+        <circle cx="{{ node.x }}" cy="{{ node.y }}" r="{{ nodeRadius }}" fill="none" stroke="{{ accent }}" stroke-width="2" opacity="0">
+          <animate attributeName="opacity" values="0;0;0.9;0" keyTimes="0;0.8;0.9;1" dur="{{ node.pulseDur }}" begin="{{ node.pulseBegin }}" repeatCount="indefinite"></animate>
+        </circle>
+      </sc-if>
+      <text x="{{ node.x }}" y="{{ node.textY }}" text-anchor="middle" dominant-baseline="middle" font-size="{{ labelFontSize }}" font-weight="700" fill="#D8D8E2" font-family="Manrope, sans-serif">{{ node.short }}</text>
+      <title>{{ node.label }}</title>
+    </g>
+  </sc-for>
+
+  <circle cx="{{ cx }}" cy="{{ cy }}" r="{{ centerOuterR }}" fill="{{ accent }}" opacity="0.1"></circle>
+  <g class="jma-orch-anim" style="transform-origin:{{ cx }}px {{ cy }}px; animation: jmaPulseCenter 3.2s ease-in-out infinite;">
+    <circle cx="{{ cx }}" cy="{{ cy }}" r="{{ centerRadius }}" fill="url(#jmaCenterGrad)" filter="url(#jmaGlow)"></circle>
+    <text x="{{ cx }}" y="{{ centerTextY }}" text-anchor="middle" dominant-baseline="middle" font-size="{{ centerFontSize }}" font-weight="800" fill="#0A0A0B" font-family="'Bricolage Grotesque', serif">{{ centerLabel }}</text>
+  </g>
+</svg>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;: {&quot;width&quot;: 380, &quot;height&quot;: 380}, &quot;size&quot;: {&quot;editor&quot;: &quot;range&quot;, &quot;default&quot;: 380, &quot;min&quot;: 240, &quot;max&quot;: 520, &quot;step&quot;: 10, &quot;tsType&quot;: &quot;number&quot;, &quot;unit&quot;: &quot;px&quot;, &quot;section&quot;: &quot;Apariencia&quot;}, &quot;accentColor&quot;: {&quot;editor&quot;: &quot;color&quot;, &quot;default&quot;: &quot;#7C6CFF&quot;, &quot;tsType&quot;: &quot;string&quot;, &quot;options&quot;: [&quot;#7C6CFF&quot;, &quot;#8B5CF6&quot;, &quot;#6366F1&quot;, &quot;#A78BFA&quot;], &quot;section&quot;: &quot;Apariencia&quot;}, &quot;centerLabel&quot;: {&quot;editor&quot;: &quot;text&quot;, &quot;default&quot;: &quot;JMA&quot;, &quot;tsType&quot;: &quot;string&quot;, &quot;section&quot;: &quot;Apariencia&quot;}, &quot;pulseIntervalMs&quot;: {&quot;editor&quot;: &quot;range&quot;, &quot;default&quot;: 2600, &quot;min&quot;: 1400, &quot;max&quot;: 4200, &quot;step&quot;: 100, &quot;tsType&quot;: &quot;number&quot;, &quot;unit&quot;: &quot;ms&quot;, &quot;section&quot;: &quot;Pulsos&quot;}, &quot;nodes&quot;: {&quot;editor&quot;: null, &quot;default&quot;: [{&quot;label&quot;: &quot;Claude&quot;, &quot;short&quot;: &quot;CL&quot;}, {&quot;label&quot;: &quot;Cursor&quot;, &quot;short&quot;: &quot;CU&quot;}, {&quot;label&quot;: &quot;GitHub Copilot&quot;, &quot;short&quot;: &quot;CP&quot;}, {&quot;label&quot;: &quot;React&quot;, &quot;short&quot;: &quot;RE&quot;}, {&quot;label&quot;: &quot;.NET&quot;, &quot;short&quot;: &quot;NT&quot;}], &quot;tsType&quot;: &quot;Array&lt;{label: string, short: string}&gt;&quot;}}">
+
+class Component extends DCLogic {
+  state = { animate: true };
+
+  defaultNodes = [
+    { label: 'Claude', short: 'CL' },
+    { label: 'Cursor', short: 'CU' },
+    { label: 'GitHub Copilot', short: 'CP' },
+    { label: 'React', short: 'RE' },
+    { label: '.NET', short: 'NT' },
+  ];
+
+  componentDidMount() {
+    const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
+    this.setState({ animate: !mq.matches });
+  }
+
+  renderVals() {
+    const size = this.props.size ?? 380;
+    const accent = this.props.accentColor ?? '#7C6CFF';
+    const pulseMs = this.props.pulseIntervalMs ?? 2600;
+    const nodesInput = this.props.nodes ?? this.defaultNodes;
+    const cx = size / 2, cy = size / 2;
+    const R = size * 0.36;
+    const nodeRadius = Math.max(18, size * 0.05);
+    const centerRadius = Math.max(26, size * 0.075);
+    const angleStep = 360 / nodesInput.length;
+
+    if (!this._seeds || this._seeds.length !== nodesInput.length) {
+      this._seeds = nodesInput.map(() => ({
+        delay: +(Math.random() * (pulseMs / 1000) * 0.8).toFixed(2),
+        durFactor: 0.82 + Math.random() * 0.5,
+        reverse: Math.random() > 0.5,
+      }));
+    }
+
+    if (!this._particles) {
+      this._particles = Array.from({ length: 10 }, () => ({
+        angle: Math.random() * Math.PI * 2,
+        radiusFactor: 0.5 + Math.random() * 0.42,
+        r: 1 + Math.random() * 1.6,
+        dur: `${(2.5 + Math.random() * 2.5).toFixed(2)}s`,
+        delay: `${(Math.random() * 3).toFixed(2)}s`,
+      }));
+    }
+
+    const nodes = nodesInput.map((n, i) => {
+      const angle = (-90 + i * angleStep) * Math.PI / 180;
+      const x = +(cx + R * Math.cos(angle)).toFixed(1);
+      const y = +(cy + R * Math.sin(angle)).toFixed(1);
+      const seed = this._seeds[i];
+      const dur = +((pulseMs / 1000) * seed.durFactor).toFixed(2);
+      const pulsePath = seed.reverse ? `M ${x},${y} L ${cx},${cy}` : `M ${cx},${cy} L ${x},${y}`;
+      return {
+        ...n,
+        x, y,
+        textY: +(y + nodeRadius * 0.32).toFixed(1),
+        pulsePath,
+        pulseDur: `${dur}s`,
+        pulseBegin: `${seed.delay}s`,
+      };
+    });
+
+    const particles = this._particles.map((p) => ({
+      x: +(cx + R * p.radiusFactor * Math.cos(p.angle)).toFixed(1),
+      y: +(cy + R * p.radiusFactor * Math.sin(p.angle)).toFixed(1),
+      r: +p.r.toFixed(2),
+      dur: p.dur,
+      delay: p.delay,
+    }));
+
+    return {
+      size, accent, cx, cy, nodeRadius, centerRadius,
+      nodeOuterR: +(nodeRadius * 1.7).toFixed(1),
+      centerOuterR: +(centerRadius * 1.8).toFixed(1),
+      depthR1: +(R * 1.28).toFixed(1),
+      depthR2: +(R * 1.12).toFixed(1),
+      glowBlur: Math.max(3, Math.round(size * 0.012)),
+      centerTextY: +(cy + centerRadius * 0.3).toFixed(1),
+      labelFontSize: Math.max(10, Math.round(nodeRadius * 0.62)),
+      centerFontSize: Math.max(13, Math.round(centerRadius * 0.5)),
+      centerLabel: this.props.centerLabel ?? 'JMA',
+      nodes,
+      particles,
+      animate: this.state.animate,
+    };
+  }
+}
+
+</script>
+</body>
+</html>

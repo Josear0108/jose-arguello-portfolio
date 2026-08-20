@@ -1,0 +1,735 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<script src="./image-slot.js"></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;700;800&family=Manrope:wght@400;500;600;700&display=swap');
+  body { margin: 0; background: #0A0A0B; }
+  * { box-sizing: border-box; }
+  ::selection { background: #7C6CFF; color: #0A0A0B; }
+  @keyframes bounceCue { 0%, 100% { transform: translateY(0); opacity: 0.5; } 50% { transform: translateY(10px); opacity: 1; } }
+  @keyframes fadeScale { from { opacity: 0; transform: scale(0.96); } to { opacity: 1; transform: scale(1); } }
+  button { font-family: inherit; }
+  button:focus-visible, a:focus-visible, [tabindex]:focus-visible {
+    outline: 2px solid #7C6CFF;
+    outline-offset: 3px;
+    border-radius: 4px;
+  }
+  @media (max-width: 768px) {
+    .jma-nav-links { display: none !important; }
+    .jma-nav-burger { display: flex !important; }
+    .jma-nav-cta { display: none !important; }
+  }
+  @media (max-width: 640px) {
+    .jma-projects-grid { grid-template-columns: 1fr !important; }
+    .jma-projects-grid > * { grid-column: span 1 !important; }
+  }
+  @media (max-width: 900px) {
+    .jma-hero-orchestrator { width: 220px !important; }
+  }
+  .jma-stack-card:hover { transform: translateY(-5px); border-top-color: #7C6CFF; }
+  .jma-glow-card::before {
+    content: ""; position: absolute; inset: 0; border-radius: inherit; padding: 1.5px;
+    background: radial-gradient(220px circle at var(--mx, 50%) var(--my, 0%), rgba(124,108,255,0.95), rgba(124,108,255,0) 65%);
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor; mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    mask-composite: exclude;
+    opacity: 0; transition: opacity 0.35s ease; pointer-events: none; z-index: 2;
+  }
+  .jma-glow-card:hover::before { opacity: 1; }
+  .jma-tech-chip img { display: block; width: 14px; height: 14px; }
+  @media (max-width: 980px) {
+    .jma-stack-grid { grid-template-columns: repeat(2,1fr) !important; }
+
+  }
+  @media (max-width: 640px) {
+    .jma-stack-grid { grid-template-columns: 1fr !important; }
+  }
+  @keyframes orbitSpin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+  .jma-outline-name {
+    color: transparent;
+    -webkit-text-stroke: 2px #F5F5F7;
+    text-stroke: 2px #F5F5F7;
+    transition: color 0.5s ease;
+  }
+  .jma-outline-name:hover { color: rgba(245,245,247,0.16); }
+  .jma-float-tag { white-space: nowrap; }
+  .jma-nav-item[data-active] {
+    color: #F5F5F7 !important;
+    background: rgba(124,108,255,0.16);
+    box-shadow: inset 0 0 0 1px rgba(124,108,255,0.4);
+  }
+  @media (max-width: 760px) { .jma-float-tag { display: none !important; } }
+
+  @media (prefers-reduced-motion: reduce) {
+    svg[style*="orbitSpin"] { animation: none !important; }
+  }
+  .jma-stat { border-right: 1px solid rgba(255,255,255,0.08); }
+  .jma-stat:last-child { border-right: none; padding-right: 0 !important; }
+  .jma-stat + .jma-stat { padding-left: clamp(16px,3vw,36px) !important; }
+  .jma-fact-row + .jma-fact-row { border-top: 1px solid rgba(255,255,255,0.07); }
+  .jma-fact-row:first-child { padding-top: 0 !important; }
+  @media (max-width: 860px) {
+    .jma-about-grid { grid-template-columns: 1fr !important; }
+  }
+  @media (max-width: 620px) {
+    .jma-stats-row { flex-direction: column; gap: 28px; }
+    .jma-stat { border-right: none !important; padding-left: 0 !important; }
+  }
+  @media (max-width: 700px) {
+    .jma-nav-cta { display: none !important; }
+  }
+  @media (hover: none), (pointer: coarse) {
+    .jma-cursor { display: none !important; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation: none !important;
+      transition: none !important;
+      scroll-behavior: auto !important;
+    }
+    .jma-cursor { display: none !important; }
+  }
+</style>
+</helmet>
+
+<div
+  id="custom-cursor"
+  class="jma-cursor"
+  style="position:fixed; top:0; left:0; width:14px; height:14px; border-radius:50%; background:{{ accent }}; pointer-events:none; z-index:9999; transform:translate(-100px,-100px); transition:width 0.25s cubic-bezier(0.34,1.56,0.64,1), height 0.25s cubic-bezier(0.34,1.56,0.64,1), background 0.2s ease; mix-blend-mode:difference;"
+></div>
+
+<div style="font-family:'Manrope',sans-serif; background:#0A0A0B; color:#EDEDF0; min-height:100vh; overflow-x:hidden;">
+
+  <div style="position:fixed; top:16px; left:50%; transform:translateX(-50%); z-index:100; width:calc(100% - 32px); max-width:1080px;">
+    <nav style="display:flex; align-items:center; justify-content:space-between; padding:12px 12px 12px 24px; background:rgba(19,19,22,0.8); backdrop-filter:blur(16px); border:1px solid rgba(255,255,255,0.08); border-radius:100px; box-shadow:0 8px 30px rgba(0,0,0,0.35);">
+      <button type="button" onMouseEnter="{{ growCursor }}" onMouseLeave="{{ shrinkCursor }}" onClick="{{ scrollToTop }}" style="font-family:'Bricolage Grotesque',serif; font-weight:800; font-size:18px; letter-spacing:-0.02em; cursor:pointer; background:none; border:none; padding:4px; color:#EDEDF0;">JMA</button>
+      <div class="jma-nav-links" style="display:flex; gap:2px;">
+        <sc-for list="{{ navItems }}" as="item" hint-placeholder-count="5">
+          <button
+            type="button"
+            onMouseEnter="{{ growCursor }}" onMouseLeave="{{ shrinkCursor }}"
+            onClick="{{ item.go }}"
+            class="jma-nav-item"
+            data-section="{{ item.id }}"
+            style="position:relative; font-size:13px; font-weight:600; color:#B8B8C2; cursor:pointer; letter-spacing:0.01em; background:none; border:none; padding:7px 14px; border-radius:100px; white-space:nowrap; transition:color 0.3s ease, background 0.3s ease;"
+            style-hover="color:#EDEDF0;"
+          >{{ item.label }}</button>
+        </sc-for>
+      </div>
+      <button type="button" class="jma-nav-burger" onClick="{{ toggleMenu }}" aria-label="Abrir menú" style="display:none; background:none; border:1px solid rgba(255,255,255,0.16); border-radius:10px; width:40px; height:40px; align-items:center; justify-content:center; cursor:pointer; flex-direction:column; gap:4px;">
+        <div style="width:18px; height:2px; background:#EDEDF0;"></div>
+        <div style="width:18px; height:2px; background:#EDEDF0;"></div>
+        <div style="width:18px; height:2px; background:#EDEDF0;"></div>
+      </button>
+    </nav>
+  </div>
+
+  <sc-if value="{{ menuOpen }}" hint-placeholder-val="{{ false }}">
+    <div style="position:fixed; inset:0; z-index:150; background:rgba(10,10,11,0.97); backdrop-filter:blur(12px); display:flex; flex-direction:column; align-items:center; justify-content:center; gap:32px;">
+      <button type="button" onClick="{{ toggleMenu }}" aria-label="Cerrar menú" style="position:absolute; top:24px; right:24px; background:none; border:none; color:#EDEDF0; font-size:28px; cursor:pointer; padding:8px;">✕</button>
+      <sc-for list="{{ navItems }}" as="item" hint-placeholder-count="5">
+        <button type="button" onClick="{{ item.goMobile }}" style="font-size:22px; font-weight:700; color:#EDEDF0; background:none; border:none; cursor:pointer;" style-hover="color:{{ accent }};">{{ item.label }}</button>
+      </sc-for>
+    </div>
+  </sc-if>
+
+  <section id="section-hero" style="min-height:100vh; display:flex; flex-direction:column; justify-content:center; padding:clamp(150px,18vw,210px) clamp(20px,6vw,80px) 100px; position:relative; overflow:hidden;">
+    <div style="max-width:1180px; margin:0 auto; width:100%; display:flex; align-items:center; gap:clamp(24px,5vw,64px); flex-wrap:wrap; position:relative; z-index:1;">
+    <div style="flex:1 1 420px; min-width:280px;">
+      <div id="hero-eyebrow" style="display:inline-flex; align-items:center; gap:8px; font-size:12px; font-weight:700; color:{{ accent }}; letter-spacing:0.1em; text-transform:uppercase; margin-bottom:24px; opacity:0; transform:translateY(18px); transition:opacity 0.7s cubic-bezier(0.16,1,0.3,1), transform 0.7s cubic-bezier(0.16,1,0.3,1); background:rgba(124,108,255,0.12); border:1px solid rgba(124,108,255,0.3); padding:8px 16px; border-radius:100px;">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="{{ accent }}" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3 3 8l5 5M16 3l5 5-5 5M13 3l-2 18"></path></svg>
+        <span style="white-space:nowrap;">4 años · React + .NET</span>
+      </div>
+      <h1 id="hero-title" style="font-family:'Bricolage Grotesque',serif; font-weight:800; font-size:clamp(42px,6.4vw,86px); line-height:1.02; letter-spacing:-0.03em; margin:0 0 28px; color:#F5F5F7; opacity:0; transform:translateY(18px); transition:opacity 0.7s cubic-bezier(0.16,1,0.3,1), transform 0.7s cubic-bezier(0.16,1,0.3,1);">
+        <span style="display:block; font-family:'Manrope',sans-serif; font-size:clamp(17px,1.8vw,22px); font-weight:600; letter-spacing:0.01em; color:#8A8A94; margin-bottom:10px;">Hola, soy</span>
+        Jose <span class="jma-outline-name">Argüello</span>
+      </h1>
+      <p id="hero-text" style="font-size:clamp(18px,2.2vw,26px); line-height:1.5; max-width:720px; color:#C4C4CE; font-weight:500; margin:0 0 40px; text-wrap:pretty; opacity:0; transform:translateY(18px); transition:opacity 0.7s cubic-bezier(0.16,1,0.3,1), transform 0.7s cubic-bezier(0.16,1,0.3,1);">
+        Ingeniero de Sistemas. Diseño interfaces con React, las sostengo con .NET, y orquesto agentes de IA como parte del flujo de trabajo.
+      </p>
+      <div id="hero-actions" style="display:flex; gap:16px; flex-wrap:wrap; align-items:center; opacity:0; transform:translateY(18px); transition:opacity 0.7s cubic-bezier(0.16,1,0.3,1), transform 0.7s cubic-bezier(0.16,1,0.3,1);">
+        <button
+          type="button"
+          onMouseEnter="{{ growCursor }}" onMouseLeave="{{ shrinkCursor }}"
+          onClick="{{ scrollToContact }}"
+          style="padding:16px 32px; background:{{ accent }}; color:#0A0A0B; font-weight:700; font-size:15px; border-radius:100px; cursor:pointer; transition:transform 0.4s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.4s ease; border:none;"
+          style-hover="transform:scale(1.05); box-shadow:0 0 0 8px rgba(124,108,255,0.16), 0 0 30px rgba(124,108,255,0.55);"
+        >Hablemos</button>
+        <button
+          type="button"
+          onMouseEnter="{{ growCursor }}" onMouseLeave="{{ shrinkCursor }}"
+          onClick="{{ scrollToProjects }}"
+          style="padding:16px 32px; border:1px solid rgba(255,255,255,0.16); color:#EDEDF0; font-weight:700; font-size:15px; border-radius:100px; cursor:pointer; background:none; white-space:nowrap;"
+          style-hover="border-color:{{ accent }};"
+        >Ver proyectos</button>
+      </div>
+    </div>
+      <div class="jma-hero-orchestrator" style="flex:0 0 auto; width:clamp(200px,24vw,300px); margin:0 clamp(0px,4vw,52px); display:flex; justify-content:center; position:relative;">
+        <div style="position:absolute; inset:-15%; background:{{ accent }}; opacity:0.1; filter:blur(70px); border-radius:50%; z-index:-1;"></div>
+        <div style="position:relative; width:100%; aspect-ratio:1;">
+          <svg viewBox="0 0 200 200" style="position:absolute; inset:-16px; width:calc(100% + 32px); height:calc(100% + 32px); animation:orbitSpin 16s linear infinite;">
+            <circle cx="100" cy="100" r="98" fill="none" stroke="#7C6CFF" stroke-opacity="0.55" stroke-width="2" stroke-linecap="round" stroke-dasharray="18 14 6 14 30 20"></circle>
+          </svg>
+          <svg viewBox="0 0 200 200" style="position:absolute; inset:-32px; width:calc(100% + 64px); height:calc(100% + 64px); animation:orbitSpin 22s linear infinite reverse;">
+            <circle cx="100" cy="100" r="98" fill="none" stroke="#7C6CFF" stroke-opacity="0.32" stroke-width="1.5" stroke-linecap="round" stroke-dasharray="10 22 26 18"></circle>
+          </svg>
+          <div style="position:absolute; inset:-8px; border-radius:50%; box-shadow:0 0 60px 6px rgba(124,108,255,0.3); pointer-events:none;"></div>
+          <image-slot id="hero-photo" src="uploads/pasted-1786589864574-0.jpg" shape="circle" placeholder="Foto de perfil" style="width:100%; height:100%; border:2px solid rgba(124,108,255,0.5); border-radius:50%; overflow:hidden; filter:brightness(0.86) contrast(1.06) saturate(0.9);"></image-slot>
+          <div style="position:absolute; inset:0; border-radius:50%; background:radial-gradient(circle at 50% 30%, rgba(124,108,255,0) 45%, rgba(124,108,255,0.22) 100%); pointer-events:none;"></div>
+          <div class="jma-float-tag" style="position:absolute; top:3%; left:-19%; background:#131316; border:1px solid rgba(124,108,255,0.35); border-radius:10px; padding:6px 11px; font-family:monospace; font-size:11px; color:{{ accent }}; box-shadow:0 6px 18px rgba(0,0,0,0.5);">&lt;/&gt; React</div>
+          <div class="jma-float-tag" style="position:absolute; top:46%; right:-21%; background:#131316; border:1px solid rgba(124,108,255,0.35); border-radius:10px; padding:6px 11px; font-family:monospace; font-size:11px; color:{{ accent }}; box-shadow:0 6px 18px rgba(0,0,0,0.5);">AI Agents</div>
+          <div class="jma-float-tag" style="position:absolute; bottom:5%; left:-15%; background:#131316; border:1px solid rgba(124,108,255,0.35); border-radius:10px; padding:6px 11px; font-family:monospace; font-size:11px; color:{{ accent }}; box-shadow:0 6px 18px rgba(0,0,0,0.5);">.NET</div>
+        </div>
+      </div>
+    </div>
+
+  </section>
+
+  <section id="section-about" style="background:#131316; padding:clamp(80px,10vw,140px) clamp(20px,6vw,80px); opacity:0; transform:translateY(28px); transition:opacity 0.9s cubic-bezier(0.16,1,0.3,1), transform 0.9s cubic-bezier(0.16,1,0.3,1); position:relative; overflow:hidden;">
+    <div style="max-width:1180px; margin:0 auto; position:relative; z-index:1;">
+      <div style="display:inline-flex; align-items:center; gap:8px; font-size:12px; font-weight:700; color:{{ accent }}; letter-spacing:0.1em; text-transform:uppercase; margin-bottom:16px; background:rgba(124,108,255,0.12); border:1px solid rgba(124,108,255,0.3); padding:8px 16px; border-radius:100px; white-space:nowrap;">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="{{ accent }}" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 12a5 5 0 1 0 0-10 5 5 0 0 0 0 10zM4 21a8 8 0 0 1 16 0"></path></svg>
+        Sobre mí
+      </div>
+      <p style="font-family:'Bricolage Grotesque',serif; font-size:clamp(26px,3.4vw,44px); font-weight:800; line-height:1.18; letter-spacing:-0.02em; color:#F5F5F7; margin:0 0 clamp(40px,5vw,60px); max-width:900px; text-wrap:pretty;">
+        Cuatro años construyendo productos donde el código y el diseño no se turnan — trabajan juntos.
+      </p>
+      <div class="jma-about-grid" style="display:grid; grid-template-columns:1.45fr 1fr; gap:clamp(40px,7vw,100px); align-items:start;">
+        <div style="display:flex; flex-direction:column; gap:20px;">
+          <p style="font-size:16.5px; line-height:1.8; color:#B0B0BA; margin:0;">
+            Empecé como aprendiz en React y .NET; hoy lidero arquitectura de componentes usados en ~15 proyectos empresariales y mentorio a desarrolladores junior. Cada interfaz que construyo pasa primero por cómo se siente usarla — la solidez técnica viene después, no al revés.
+          </p>
+          <p style="font-size:16.5px; line-height:1.8; color:#B0B0BA; margin:0;">
+            Uso Claude, Cursor y Copilot como parte real de cómo trabajo: orquesto agentes para acelerar el desarrollo sin ceder criterio sobre lo que construyo.
+          </p>
+        </div>
+        <div style="display:flex; flex-direction:column;">
+          <sc-for list="{{ facts }}" as="fact" hint-placeholder-count="3">
+            <div class="jma-fact-row" style="padding:16px 0;">
+              <div style="font-size:11.5px; font-weight:700; color:#7A7A85; letter-spacing:0.09em; text-transform:uppercase; margin-bottom:7px;">{{ fact.label }}</div>
+              <div style="font-size:14.5px; color:#DCDCE2; line-height:1.55;">{{ fact.value }}</div>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+      <div class="jma-stats-row" style="display:flex; gap:0; margin-top:clamp(48px,6vw,72px); padding-top:clamp(32px,4vw,44px); border-top:1px solid rgba(255,255,255,0.08);">
+        <sc-for list="{{ stats }}" as="stat" hint-placeholder-count="3">
+          <div class="jma-stat" style="flex:1; padding:0 clamp(12px,3vw,32px) 0 0;">
+            <div style="display:flex; align-items:flex-start; font-family:'Bricolage Grotesque',serif; font-size:clamp(32px,4vw,52px); font-weight:800; color:{{ accent }}; line-height:1; letter-spacing:-0.03em;">
+              <span>{{ stat.prefix }}</span>
+              <sc-for list="{{ stat.digits }}" as="digit" hint-placeholder-count="2">
+                <span style="display:inline-block; height:1em; overflow:hidden; font-variant-numeric:tabular-nums;">
+                  <span class="jma-digit-col" data-target="{{ digit.value }}" style="display:block; transform:translateY(0); transition:transform 2.1s cubic-bezier(0.22,1,0.36,1); transition-delay:{{ digit.delay }};">
+                    <sc-for list="{{ digitFaces }}" as="face" hint-placeholder-count="10">
+                      <span style="display:block; height:1em; line-height:1; text-align:center;">{{ face }}</span>
+                    </sc-for>
+                  </span>
+                </span>
+              </sc-for>
+              <span>{{ stat.suffix }}</span>
+            </div>
+            <div style="font-size:12.5px; color:#8A8A94; font-weight:600; margin-top:10px;">{{ stat.label }}</div>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+  </section>
+
+  <section id="section-trajectory" style="padding:clamp(80px,10vw,140px) clamp(20px,6vw,80px); opacity:0; transform:translateY(28px); transition:opacity 0.9s cubic-bezier(0.16,1,0.3,1), transform 0.9s cubic-bezier(0.16,1,0.3,1);">
+    <div style="max-width:900px; margin:0 auto;">
+      <div style="display:inline-flex; align-items:center; gap:8px; font-size:12px; font-weight:700; color:{{ accent }}; letter-spacing:0.1em; text-transform:uppercase; margin-bottom:16px; background:rgba(124,108,255,0.12); border:1px solid rgba(124,108,255,0.3); padding:8px 16px; border-radius:100px; white-space:nowrap;">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="{{ accent }}" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l6-6 4 4 8-8M21 7v6h-6"></path></svg>
+        Trayectoria
+      </div>
+      <h2 style="font-family:'Bricolage Grotesque',serif; font-weight:800; font-size:clamp(32px,4vw,52px); color:#F5F5F7; margin:0 0 12px; letter-spacing:-0.02em;">Cuatro años, una línea recta</h2>
+      <p style="font-size:16px; color:#C4C4CE; margin:0 0 56px;">La misma empresa, cada vez más responsabilidad.</p>
+      <div id="trajectory-track" style="display:flex; flex-direction:column; position:relative;">
+        <div style="position:absolute; left:13px; top:6px; bottom:6px; width:1px; background:rgba(255,255,255,0.1);"></div>
+        <div id="trajectory-progress-line" style="position:absolute; left:13px; top:6px; bottom:6px; width:1px; background:{{ accent }}; transform-origin:top; transform:scaleY(0);"></div>
+        <sc-for list="{{ trajectory }}" as="role" hint-placeholder-count="4">
+          <div class="jma-reveal-item" style="display:grid; grid-template-columns:28px 1fr; gap:24px; padding-bottom:48px; position:relative; opacity:0; transform:translateY(20px); transition:opacity 0.6s cubic-bezier(0.16,1,0.3,1), transform 0.6s cubic-bezier(0.16,1,0.3,1);">
+            <div style="display:flex; flex-direction:column; align-items:center; position:relative; z-index:1;">
+              <div id="trajectory-dot-{{ $index }}" style="width:12px; height:12px; border-radius:50%; background:{{ accent }}; flex-shrink:0; margin-top:6px; opacity:0.35; transition:opacity 0.3s ease, box-shadow 0.3s ease;"></div>
+            </div>
+            <div style="padding-bottom:8px;">
+              <div style="display:flex; flex-wrap:wrap; align-items:baseline; gap:10px; margin-bottom:6px;">
+                <div style="font-size:19px; font-weight:700; color:#F0F0F3;">{{ role.title }}</div>
+                <div style="font-size:13px; color:#7A7A85; font-weight:600;">{{ role.dates }}</div>
+              </div>
+              <div style="font-size:14px; color:{{ accent }}; font-weight:600; margin-bottom:12px;">{{ role.company }}</div>
+              <p style="font-size:15px; line-height:1.7; color:#AEAEB8; margin:0; max-width:600px; text-wrap:pretty;">{{ role.desc }}</p>
+            </div>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+  </section>
+
+  <section id="section-stack" style="background:#131316; padding:clamp(80px,10vw,140px) clamp(20px,6vw,80px); opacity:0; transform:translateY(28px); transition:opacity 0.9s cubic-bezier(0.16,1,0.3,1), transform 0.9s cubic-bezier(0.16,1,0.3,1);">
+    <div style="max-width:1180px; margin:0 auto;">
+      <div style="display:inline-flex; align-items:center; gap:8px; font-size:12px; font-weight:700; color:{{ accent }}; letter-spacing:0.1em; text-transform:uppercase; margin-bottom:16px; background:rgba(124,108,255,0.12); border:1px solid rgba(124,108,255,0.3); padding:8px 16px; border-radius:100px; white-space:nowrap;">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="{{ accent }}" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path></svg>
+        Stack tecnológico
+      </div>
+      <h2 style="font-family:'Bricolage Grotesque',serif; font-weight:800; font-size:clamp(32px,4vw,52px); color:#F5F5F7; margin:0 0 12px; letter-spacing:-0.02em;">Herramientas que uso todos los días</h2>
+      <p style="font-size:16px; color:#C4C4CE; margin:0 0 56px;">Del frontend a la IA aplicada, sin dejar de lado el backend que lo sostiene.</p>
+      <div class="jma-stack-grid" style="display:grid; grid-template-columns:repeat(3,1fr); gap:20px;">
+        <sc-for list="{{ stackCategories }}" as="cat" hint-placeholder-count="5">
+          <div class="jma-reveal-item jma-stack-card jma-glow-card" style="position:relative; background:#1A1A1E; border:1px solid rgba(255,255,255,0.06); border-top:3px solid rgba(124,108,255,0.25); border-radius:16px; padding:28px 24px 24px; opacity:0; transform:translateY(20px); transition:opacity 0.6s cubic-bezier(0.16,1,0.3,1), transform 0.4s cubic-bezier(0.34,1.56,0.64,1), border-top-color 0.4s cubic-bezier(0.34,1.56,0.64,1);">
+            <div style="width:44px; height:44px; border-radius:50%; background:rgba(124,108,255,0.12); display:flex; align-items:center; justify-content:center; margin-bottom:18px;">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="{{ accent }}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="{{ cat.icon }}"></path></svg>
+            </div>
+            <div style="font-family:'Bricolage Grotesque',serif; font-size:17px; font-weight:800; color:#F0F0F3; margin-bottom:10px; letter-spacing:-0.01em;">{{ cat.name }}</div>
+            <p style="font-size:14px; line-height:1.6; color:#9C9CA6; margin:0 0 18px; text-wrap:pretty;">{{ cat.desc }}</p>
+            <div style="display:flex; flex-wrap:wrap; gap:8px;">
+              <sc-for list="{{ cat.items }}" as="tag" hint-placeholder-count="4">
+                <div class="jma-tech-chip" style="display:inline-flex; align-items:center; gap:7px; font-size:12.5px; font-weight:600; color:#C4C4CE; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.06); border-radius:100px; padding:6px 13px;">
+                  <sc-if value="{{ tag.slug }}" hint-placeholder-val="{{ true }}">
+                    <img src="https://cdn.simpleicons.org/{{ tag.slug }}" alt="" loading="lazy"/>
+                  </sc-if>
+                  <sc-if value="{{ tag.noIcon }}" hint-placeholder-val="{{ false }}">
+                    <span style="width:6px; height:6px; border-radius:50%; background:{{ accent }}; opacity:0.55;"></span>
+                  </sc-if>
+                  {{ tag.label }}
+                </div>
+              </sc-for>
+            </div>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+  </section>
+
+  <section id="section-projects" style="padding:clamp(80px,10vw,140px) clamp(20px,6vw,80px); opacity:0; transform:translateY(28px); transition:opacity 0.9s cubic-bezier(0.16,1,0.3,1), transform 0.9s cubic-bezier(0.16,1,0.3,1);">
+    <div style="max-width:1180px; margin:0 auto;">
+      <div style="display:inline-flex; align-items:center; gap:8px; font-size:12px; font-weight:700; color:{{ accent }}; letter-spacing:0.1em; text-transform:uppercase; margin-bottom:16px; background:rgba(124,108,255,0.12); border:1px solid rgba(124,108,255,0.3); padding:8px 16px; border-radius:100px; white-space:nowrap;">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="{{ accent }}" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path></svg>
+        Proyectos
+      </div>
+      <h2 style="font-family:'Bricolage Grotesque',serif; font-weight:800; font-size:clamp(40px,6vw,80px); color:#F5F5F7; margin:0 0 14px; letter-spacing:-0.03em; line-height:1;">Selección de trabajo</h2>
+      <p style="font-size:15px; color:#8A8A94; margin:0 0 48px;">Capturas pendientes — click en cualquier tarjeta para ver el detalle.</p>
+      <div class="jma-projects-grid" style="display:grid; grid-template-columns:repeat(2,1fr); gap:24px;">
+        <sc-for list="{{ projects }}" as="proj" hint-placeholder-count="5">
+          <button
+            type="button"
+            class="jma-reveal-item jma-glow-card"
+            onMouseEnter="{{ growCursor }}" onMouseLeave="{{ shrinkCursor }}"
+            onClick="{{ proj.open }}"
+            style="grid-column:span {{ proj.span }}; cursor:pointer; border-radius:20px; overflow:hidden; background:#1A1A1E; border:1px solid rgba(255,255,255,0.06); transition:transform 0.5s cubic-bezier(0.16,1,0.3,1), border-color 0.3s ease, opacity 0.6s cubic-bezier(0.16,1,0.3,1); position:relative; display:block; width:100%; text-align:left; padding:0; opacity:0; transform:translateY(20px);"
+            style-hover="transform:translateY(-6px); border-color:rgba(124,108,255,0.4);"
+          >
+            <div style="height:220px; position:relative; background-image:repeating-linear-gradient(135deg, rgba(255,255,255,0.05) 0px, rgba(255,255,255,0.05) 2px, transparent 2px, transparent 14px); background-color:#202024; display:flex; align-items:center; justify-content:center;">
+              <div style="font-family:monospace; font-size:12px; color:#6C6C78; letter-spacing:0.02em;">CAPTURA PENDIENTE</div>
+            </div>
+            <div style="padding:24px;">
+              <div style="font-size:17px; font-weight:700; color:#F0F0F3; margin-bottom:8px;">{{ proj.name }}</div>
+              <p style="font-size:14px; line-height:1.6; color:#9C9CA6; margin:0 0 16px; text-wrap:pretty;">{{ proj.summary }}</p>
+              <div style="display:flex; flex-wrap:wrap; gap:6px;">
+                <sc-for list="{{ proj.stack }}" as="s" hint-placeholder-count="3">
+                  <div class="jma-tech-chip" style="display:inline-flex; align-items:center; gap:6px; font-size:11px; font-weight:600; color:{{ accent }}; background:rgba(124,108,255,0.12); padding:5px 10px; border-radius:100px;">
+                    <sc-if value="{{ s.slug }}" hint-placeholder-val="{{ true }}">
+                      <img src="https://cdn.simpleicons.org/{{ s.slug }}" alt="" loading="lazy"/>
+                    </sc-if>
+                    <sc-if value="{{ s.noIcon }}" hint-placeholder-val="{{ false }}">
+                      <span style="width:5px; height:5px; border-radius:50%; background:{{ accent }}; opacity:0.6;"></span>
+                    </sc-if>
+                    {{ s.label }}
+                  </div>
+                </sc-for>
+              </div>
+            </div>
+          </button>
+        </sc-for>
+      </div>
+    </div>
+  </section>
+
+  <sc-if value="{{ hasSelectedProject }}" hint-placeholder-val="{{ false }}">
+    <div
+      onClick="{{ closeProject }}"
+      style="position:fixed; inset:0; background:rgba(8,8,9,0.82); backdrop-filter:blur(6px); z-index:200; display:flex; align-items:center; justify-content:center; padding:24px; animation:fadeScale 0.35s cubic-bezier(0.16,1,0.3,1);"
+    >
+      <div onClick="{{ stopPropagation }}" role="dialog" aria-modal="true" style="max-width:640px; width:100%; background:#18181C; border:1px solid rgba(255,255,255,0.1); border-radius:24px; padding:clamp(28px,4vw,48px); max-height:84vh; overflow-y:auto;">
+        <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:24px;">
+          <div style="font-size:26px; font-weight:800; font-family:'Bricolage Grotesque',serif; color:#F5F5F7; max-width:480px;">{{ selectedProject.name }}</div>
+          <button type="button" onMouseEnter="{{ growCursor }}" onMouseLeave="{{ shrinkCursor }}" onClick="{{ closeProject }}" aria-label="Cerrar detalle" style="cursor:pointer; color:#8A8A94; font-size:22px; line-height:1; padding:4px; background:none; border:none;">✕</button>
+        </div>
+        <p style="font-size:15.5px; line-height:1.8; color:#B8B8C2; margin:0 0 24px; text-wrap:pretty;">{{ selectedProject.detail }}</p>
+        <div style="display:flex; flex-wrap:wrap; gap:8px; margin-bottom:28px;">
+          <sc-for list="{{ selectedProject.stack }}" as="s" hint-placeholder-count="3">
+            <div class="jma-tech-chip" style="display:inline-flex; align-items:center; gap:7px; font-size:12px; font-weight:600; color:{{ accent }}; background:rgba(124,108,255,0.12); padding:6px 12px; border-radius:100px;">
+              <sc-if value="{{ s.slug }}" hint-placeholder-val="{{ true }}">
+                <img src="https://cdn.simpleicons.org/{{ s.slug }}" alt="" loading="lazy"/>
+              </sc-if>
+              <sc-if value="{{ s.noIcon }}" hint-placeholder-val="{{ false }}">
+                <span style="width:5px; height:5px; border-radius:50%; background:{{ accent }}; opacity:0.6;"></span>
+              </sc-if>
+              {{ s.label }}
+            </div>
+          </sc-for>
+        </div>
+        <sc-if value="{{ selectedProject.link }}" hint-placeholder-val="{{ false }}">
+          <a href="{{ selectedProject.link }}" target="_blank" rel="noopener" style="color:{{ accent }}; font-weight:700; font-size:14px; text-decoration:none;" style-hover="text-decoration:underline;">Ver proyecto →</a>
+        </sc-if>
+        <sc-if value="{{ selectedProject.internal }}" hint-placeholder-val="{{ false }}">
+          <div style="font-size:13px; color:#7A7A85; font-weight:600;">Proyecto empresarial interno</div>
+        </sc-if>
+      </div>
+    </div>
+  </sc-if>
+
+  <section id="section-contact" style="padding:clamp(80px,9vw,120px) clamp(20px,6vw,80px) 48px; opacity:0; transform:translateY(28px); transition:opacity 0.9s cubic-bezier(0.16,1,0.3,1), transform 0.9s cubic-bezier(0.16,1,0.3,1);">
+    <div style="max-width:900px; margin:0 auto; text-align:center;">
+      <div style="display:inline-flex; align-items:center; gap:8px; font-size:12px; font-weight:700; color:{{ accent }}; letter-spacing:0.1em; text-transform:uppercase; margin-bottom:20px; background:rgba(124,108,255,0.12); border:1px solid rgba(124,108,255,0.3); padding:8px 16px; border-radius:100px; white-space:nowrap;">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="{{ accent }}" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16v16H4zM22 6l-10 7L2 6"></path></svg>
+        Contáctame
+      </div>
+      <h2 style="font-family:'Bricolage Grotesque',serif; font-weight:800; font-size:clamp(36px,6vw,72px); color:#F5F5F7; margin:0 0 24px; letter-spacing:-0.02em;">
+        Hablemos de tu próximo proyecto
+      </h2>
+      <p style="font-size:17px; color:#AEAEB8; margin:0 0 36px;">Frontend con criterio de diseño, backend sólido, y un flujo de trabajo potenciado por IA.</p>
+      <a
+        href="mailto:josearguello0108@gmail.com"
+        onMouseEnter="{{ growCursor }}" onMouseLeave="{{ shrinkCursor }}"
+        style="display:inline-flex; align-items:center; gap:10px; padding:18px 40px; background:{{ accent }}; color:#0A0A0B; font-weight:700; font-size:16px; border-radius:100px; text-decoration:none; transition:transform 0.4s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.4s ease;"
+        style-hover="transform:scale(1.05); box-shadow:0 0 0 8px rgba(124,108,255,0.16), 0 0 30px rgba(124,108,255,0.55);"
+      >
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16v16H4zM22 6l-10 7L2 6"></path></svg>
+        Contáctame
+      </a>
+      <div style="display:flex; gap:28px; justify-content:center; flex-wrap:wrap; font-size:14px; color:#8A8A94; font-weight:600; margin-top:36px;">
+        <div>Bucaramanga, Colombia</div>
+        <a href="#" title="Pendiente: agregar URL de LinkedIn" style="color:#8A8A94; text-decoration:none; border-bottom:1px dashed #55555E;" style-hover="color:{{ accent }}; border-bottom-color:{{ accent }};">LinkedIn</a>
+        <a href="#" title="Pendiente: agregar URL de GitHub" style="color:#8A8A94; text-decoration:none; border-bottom:1px dashed #55555E;" style-hover="color:{{ accent }}; border-bottom-color:{{ accent }};">GitHub</a>
+      </div>
+    </div>
+    <div style="text-align:center; margin-top:64px; font-size:12px; color:#55555E;">Jose Manuel Argüello Pico — 2026</div>
+  </section>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;accentColor&quot;: {&quot;editor&quot;: &quot;color&quot;, &quot;default&quot;: &quot;#7C6CFF&quot;, &quot;tsType&quot;: &quot;string&quot;, &quot;options&quot;: [&quot;#7C6CFF&quot;, &quot;#8B5CF6&quot;, &quot;#6366F1&quot;, &quot;#A78BFA&quot;]}}">
+class Component extends DCLogic {
+  state = { selectedIndex: null, menuOpen: false };
+
+  stats = [
+    { prefix: '', num: 4, suffix: '+', label: 'Años de experiencia' },
+    { prefix: '~', num: 15, suffix: '', label: 'Proyectos empresariales' },
+    { prefix: '', num: 30, suffix: '%+', label: 'Eficiencia del equipo' },
+  ];
+
+  facts = [
+    { label: 'Educación', value: 'Ing. de Sistemas — Universidad Cooperativa de Colombia, 2022' },
+    { label: 'Certificaciones', value: 'APIs .NET, Automatizaciones n8n, Claude Code — Platzi 2025' },
+    { label: 'Idiomas', value: 'Español (nativo) · Inglés (básico, A2 en estudio)' },
+  ];
+
+  trajectoryData = [
+    { title: 'Desarrollador Full Stack', company: 'Sistemas y Computadores S.A.', dates: 'Nov 2025 — Actualidad', desc: 'Desarrollo y mantenimiento frontend/backend, arquitecturas escalables con React y Express, integración activa de IA en el día a día.' },
+    { title: 'Desarrollador Middle / Semi-Senior · Líder técnico desde abril 2025', company: 'Sistemas y Computadores S.A.', dates: 'Sep 2022 — Nov 2025', desc: 'Plantilla de autenticación y seguridad adoptada en ~15 proyectos. Librería de componentes transversales que mejoró la eficiencia del equipo en 30%+. Mentoría a desarrolladores junior.' },
+    { title: 'Desarrollador Junior', company: 'Sistemas y Computadores S.A.', dates: 'Abr 2022 — Sep 2022', desc: 'Interfaces web responsivas con React y .NET Framework, consumo de APIs REST.' },
+    { title: 'Aprendiz SENA — Prácticas universitarias', company: 'Sistemas y Computadores S.A.', dates: 'Abr 2021 — Abr 2022', desc: 'Primeros pasos en React y .NET, colaborando en proyectos de desarrollo empresarial.' },
+  ];
+
+  stackData = [
+    {
+      name: 'Frontend Development',
+      desc: 'React avanzado con foco en performance y experiencia de usuario.',
+      icon: 'M8 3 3 8l5 5M16 3l5 5-5 5M13 3l-2 18',
+      items: [
+        { label: 'React (Avanzado)', slug: 'react' },
+        { label: 'TypeScript', slug: 'typescript' },
+        { label: 'Tailwind CSS', slug: 'tailwindcss' },
+        { label: 'Shadcn UI', slug: 'shadcnui' },
+        { label: 'Framer Motion', slug: 'framer' },
+        { label: 'Zustand', slug: '' },
+        { label: 'TanStack Query', slug: 'reactquery' },
+        { label: 'Zod', slug: 'zod' },
+      ],
+    },
+    {
+      name: 'Backend Development',
+      desc: 'APIs y arquitecturas escalables sobre .NET y Node, sin atajos.',
+      icon: 'M4 3h16v6H4zM4 15h16v6H4zM8 6h.01M8 18h.01',
+      items: [
+        { label: '.NET Core', slug: 'dotnet' },
+        { label: '.NET Framework', slug: 'dotnet' },
+        { label: 'C#', slug: '' },
+        { label: 'Node.js', slug: 'nodedotjs' },
+        { label: 'Express', slug: 'express' },
+        { label: 'APIs REST', slug: '' },
+      ],
+    },
+    {
+      name: 'Bases de Datos',
+      desc: 'Modelado y lógica de negocio directo en SQL Server.',
+      icon: 'M4 6c0-1.66 3.58-3 8-3s8 1.34 8 3-3.58 3-8 3-8-1.34-8-3zM4 6v6c0 1.66 3.58 3 8 3s8-1.34 8-3V6M4 12v6c0 1.66 3.58 3 8 3s8-1.34 8-3v-6',
+      items: [
+        { label: 'SQL Server', slug: '' },
+        { label: 'Stored Procedures', slug: '' },
+        { label: 'Triggers', slug: '' },
+      ],
+    },
+    {
+      name: 'AI-Powered Development',
+      desc: 'Orquesto agentes de IA como parte real del flujo de trabajo, no como buzzword.',
+      icon: 'M9 3h6v4H9zM4 21v-6a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v6M9 12V7M15 12V7M4 21h16M7 17h.01M17 17h.01',
+      items: [
+        { label: 'Claude Code & API', slug: 'anthropic' },
+        { label: 'Cursor AI', slug: '' },
+        { label: 'GitHub Copilot', slug: 'githubcopilot' },
+        { label: 'Orquestación de agentes', slug: '' },
+      ],
+    },
+    {
+      name: 'Herramientas',
+      desc: 'Control de versiones y entornos que sostienen el trabajo en equipo.',
+      icon: 'M14.7 6.3a3 3 0 1 1-4.2 4.2L3 18v3h3l7.5-7.5a3 3 0 1 1 4.2-4.2z',
+      items: [
+        { label: 'Git', slug: 'git' },
+        { label: 'GitHub', slug: 'github' },
+        { label: 'Azure DevOps', slug: '' },
+        { label: 'VS Code', slug: '' },
+      ],
+    },
+  ];
+
+  projectsData = [
+    { name: 'Plantilla Transversal de Autenticación y Seguridad', summary: 'Punto de entrada estandarizado adoptado en ~15 proyectos empresariales.', detail: 'Incluye autenticación, perfilamiento, seguridad y cumplimiento normativo. Reduce significativamente el tiempo de configuración inicial en cada nuevo proyecto.', stack: [{ label: '.NET', slug: 'dotnet' }, { label: 'React', slug: 'react' }, { label: 'SQL Server', slug: '' }], span: 2, internal: true },
+    { name: 'Librería de Componentes Transversales', summary: 'Formularios, cargue de archivos y visor de PDFs usados por todo el equipo.', detail: 'Componentes reutilizables adoptados como estándar del equipo de desarrollo, mejorando la eficiencia general en 30%+.', stack: [{ label: 'React', slug: 'react' }, { label: 'TypeScript', slug: 'typescript' }, { label: 'Zustand', slug: '' }], span: 1, internal: true },
+    { name: 'Gestor de Estados de Trámites', summary: 'Flujos de trabajo para múltiples trámites empresariales con vistas estandarizadas.', detail: 'Reducción del 40% en el tiempo de implementación de pantallas gracias a vistas y estados estandarizados.', stack: [{ label: 'React', slug: 'react' }, { label: 'Express.js', slug: 'express' }, { label: 'SQL Server', slug: '' }], span: 1, internal: true },
+    { name: 'Patitas Unidas', summary: 'Plataforma para fundaciones de animales con escasos recursos.', detail: 'Adopción, voluntariado, campañas y apadrinamiento en una sola plataforma — proyecto personal construido de punta a punta.', stack: [{ label: 'React', slug: 'react' }, { label: '.NET', slug: 'dotnet' }, { label: 'SQL Server', slug: '' }], span: 1, link: '#' },
+    { name: 'Colombia Explorer', summary: 'Aplicación interactiva que consume la API pública de datos de Colombia.', detail: 'Exploración visual de datos abiertos de Colombia, desplegada en Vercel.', stack: [{ label: 'React', slug: 'react' }, { label: 'API REST', slug: '' }, { label: 'Vercel', slug: 'vercel' }], span: 1, link: '#' },
+  ];
+
+  componentDidMount() {
+    this.cursorEl = document.getElementById('custom-cursor');
+    window.addEventListener('mousemove', this.onMove);
+
+    this.heroEl = document.getElementById('section-hero');
+    this.aboutEl = document.getElementById('section-about');
+    this.trajectoryEl = document.getElementById('section-trajectory');
+    this.stackEl = document.getElementById('section-stack');
+    this.projectsEl = document.getElementById('section-projects');
+    this.contactEl = document.getElementById('section-contact');
+
+    const revealIds = ['section-about', 'section-trajectory', 'section-stack', 'section-projects', 'section-contact'];
+    this.checkReveal = () => {
+      const vh = window.innerHeight;
+      revealIds.forEach((id) => {
+        const el = document.getElementById(id);
+        if (!el) return;
+        const r = el.getBoundingClientRect();
+        if (r.top < vh * 0.9) {
+          el.style.opacity = '1';
+          el.style.transform = 'translateY(0)';
+          this.triggerStagger(el);
+
+        }
+      });
+    };
+    window.addEventListener('scroll', this.checkReveal, { passive: true });
+    window.addEventListener('resize', this.checkReveal);
+    this.checkReveal();
+    this.revealInterval = setInterval(this.checkReveal, 400);
+    this.bindGlowCards();
+    this.glowInterval = setInterval(this.bindGlowCards, 800);
+    window.addEventListener('scroll', this.rollCounters, { passive: true });
+    this.rollCounters();
+    window.addEventListener('scroll', this.updateActiveNav, { passive: true });
+    this.navInterval = setInterval(this.updateActiveNav, 400);
+    this.updateActiveNav();
+
+    const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    this.trajectoryReducedMotion = prefersReduced;
+    this.updateTrajectoryProgress();
+    if (!prefersReduced) {
+      window.addEventListener('scroll', this.updateTrajectoryProgress, { passive: true });
+      window.addEventListener('resize', this.updateTrajectoryProgress);
+      this.trajectoryInterval = setInterval(this.updateTrajectoryProgress, 300);
+    }
+    ['hero-eyebrow', 'hero-title', 'hero-text', 'hero-actions'].forEach((id, i) => {
+      const el = document.getElementById(id);
+      if (!el) return;
+      const delay = prefersReduced ? 0 : i * 100;
+      setTimeout(() => { el.style.opacity = '1'; el.style.transform = ''; }, delay);
+    });
+
+  }
+
+  updateActiveNav = () => {
+    const items = document.querySelectorAll('.jma-nav-item');
+    if (!items.length) return;
+    const marker = window.innerHeight * 0.35;
+    let activeId = null;
+    items.forEach((btn) => {
+      const sec = document.getElementById(btn.dataset.section);
+      if (!sec) return;
+      const r = sec.getBoundingClientRect();
+      if (r.top <= marker && r.bottom > marker) activeId = btn.dataset.section;
+    });
+    items.forEach((btn) => {
+      if (btn.dataset.section === activeId) btn.setAttribute('data-active', '');
+      else btn.removeAttribute('data-active');
+    });
+  };
+
+  updateTrajectoryProgress = () => {
+    const track = document.getElementById('trajectory-track');
+    const line = document.getElementById('trajectory-progress-line');
+    if (!track || !line) return;
+    let progress;
+    if (this.trajectoryReducedMotion) {
+      progress = 1;
+    } else {
+      const rect = track.getBoundingClientRect();
+      const vh = window.innerHeight;
+      progress = Math.min(1, Math.max(0, (vh - rect.top) / (rect.height + vh)));
+    }
+    line.style.transform = `scaleY(${progress})`;
+    const trackTop = track.getBoundingClientRect().top;
+    const trackHeight = track.offsetHeight;
+    const filledPx = progress * trackHeight;
+    track.querySelectorAll('[id^="trajectory-dot-"]').forEach((dot) => {
+      const dotOffset = dot.getBoundingClientRect().top - trackTop;
+      const reached = this.trajectoryReducedMotion || dotOffset <= filledPx;
+      dot.style.opacity = reached ? '1' : '0.35';
+      dot.style.boxShadow = reached ? `0 0 0 5px rgba(124,108,255,0.25)` : 'none';
+    });
+  };
+
+  rollCounters = () => {
+    if (this._countersRolled) return;
+    const row = document.querySelector('.jma-stats-row');
+    if (!row) return;
+    const r = row.getBoundingClientRect();
+    if (r.top > window.innerHeight * 0.85 || r.bottom < 0) return;
+    const cols = document.querySelectorAll('.jma-digit-col');
+    if (!cols.length) return;
+    this._countersRolled = true;
+    const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    cols.forEach((col) => {
+      const target = parseInt(col.dataset.target, 10) || 0;
+      if (prefersReduced) col.style.transition = 'none';
+      col.style.transform = `translateY(-${target}em)`;
+    });
+  };
+
+  bindGlowCards = () => {
+    document.querySelectorAll('.jma-glow-card').forEach((card) => {
+      if (card.__glowBound) return;
+      card.__glowBound = true;
+      card.addEventListener('pointermove', (e) => {
+        const r = card.getBoundingClientRect();
+        card.style.setProperty('--mx', `${e.clientX - r.left}px`);
+        card.style.setProperty('--my', `${e.clientY - r.top}px`);
+      });
+    });
+  };
+
+  triggerStagger = (container) => {
+    if (!container || container.dataset.staggered) return;
+    container.dataset.staggered = '1';
+    const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const items = container.querySelectorAll('.jma-reveal-item');
+    items.forEach((item, i) => {
+      const delay = prefersReduced ? 0 : i * 90;
+      setTimeout(() => { item.style.opacity = '1'; item.style.transform = ''; }, delay);
+    });
+  };
+
+  componentWillUnmount() {
+    window.removeEventListener('mousemove', this.onMove);
+    window.removeEventListener('scroll', this.checkReveal);
+    window.removeEventListener('resize', this.checkReveal);
+    window.removeEventListener('scroll', this.updateTrajectoryProgress);
+    window.removeEventListener('resize', this.updateTrajectoryProgress);
+    if (this.revealInterval) clearInterval(this.revealInterval);
+    if (this.trajectoryInterval) clearInterval(this.trajectoryInterval);
+    if (this.glowInterval) clearInterval(this.glowInterval);
+    window.removeEventListener('scroll', this.rollCounters);
+    window.removeEventListener('scroll', this.updateActiveNav);
+    if (this.navInterval) clearInterval(this.navInterval);
+  }
+
+  onMove = (e) => { if (this.cursorEl) this.cursorEl.style.transform = `translate(${e.clientX - 7}px, ${e.clientY - 7}px)`; };
+  growCursor = () => { if (this.cursorEl) { this.cursorEl.style.width = '44px'; this.cursorEl.style.height = '44px'; } };
+  shrinkCursor = () => { if (this.cursorEl) { this.cursorEl.style.width = '14px'; this.cursorEl.style.height = '14px'; } };
+
+  scrollToEl = (el) => {
+    if (!el) return;
+    const top = el.getBoundingClientRect().top + window.scrollY - 90;
+    window.scrollTo({ top: Math.max(0, top), behavior: 'smooth' });
+  };
+  scrollToId = (id) => this.scrollToEl(document.getElementById(id));
+  scrollToTop = () => window.scrollTo({ top: 0, behavior: 'smooth' });
+  scrollToAbout = () => this.scrollToId('section-about');
+  scrollToTrajectory = () => this.scrollToId('section-trajectory');
+  scrollToStack = () => this.scrollToId('section-stack');
+  scrollToProjects = () => this.scrollToId('section-projects');
+  scrollToContact = () => this.scrollToId('section-contact');
+
+  stopPropagation = (e) => { e.stopPropagation(); };
+
+  toggleMenu = () => {
+    this.setState((s) => {
+      const next = !s.menuOpen;
+      document.body.style.overflow = next ? 'hidden' : '';
+      return { menuOpen: next };
+    });
+  };
+  closeMenu = () => { document.body.style.overflow = ''; this.setState({ menuOpen: false }); };
+
+  renderVals() {
+    const accent = this.props.accentColor ?? '#7C6CFF';
+    const projects = this.projectsData.map((p, i) => ({
+      ...p,
+      stack: p.stack.map((s) => ({ ...s, noIcon: !s.slug })),
+      open: () => this.setState({ selectedIndex: i }),
+    }));
+    const navItems = [
+      { label: 'Sobre mí', id: 'section-about', go: this.scrollToAbout },
+      { label: 'Trayectoria', id: 'section-trajectory', go: this.scrollToTrajectory },
+      { label: 'Stack', id: 'section-stack', go: this.scrollToStack },
+      { label: 'Proyectos', id: 'section-projects', go: this.scrollToProjects },
+      { label: 'Contáctame', id: 'section-contact', go: this.scrollToContact },
+    ].map((item) => ({ ...item, goMobile: () => { this.closeMenu(); item.go(); } }));
+    const selectedProject = this.state.selectedIndex !== null ? projects[this.state.selectedIndex] : null;
+    return {
+      accent,
+      navItems,
+      digitFaces: ['0','1','2','3','4','5','6','7','8','9'],
+      stats: this.stats.map((s) => ({
+        ...s,
+        digits: String(s.num).split('').map((d, i) => ({ value: d, delay: `${i * 0.18}s` })),
+      })),
+      facts: this.facts,
+      trajectory: this.trajectoryData,
+      stackCategories: this.stackData.map((c) => ({
+        ...c,
+        items: c.items.map((it) => ({ ...it, noIcon: !it.slug })),
+      })),
+      projects,
+      hasSelectedProject: this.state.selectedIndex !== null,
+      selectedProject: selectedProject ?? {},
+      closeProject: () => this.setState({ selectedIndex: null }),
+      stopPropagation: this.stopPropagation,
+      menuOpen: this.state.menuOpen,
+      toggleMenu: this.toggleMenu,
+      scrollToTop: this.scrollToTop,
+      scrollToContact: this.scrollToContact,
+      scrollToProjects: this.scrollToProjects,
+    };
+  }
+}
+</script>
+</body>
+</html>

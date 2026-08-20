@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+
+<helmet>
+<style>
+  @keyframes jmaMorphButton {
+    0% { transform: translate(0px,-162px) scale(0.6596,0.3636); }
+    36.59% { transform: translate(0px,-162px) scale(0.6596,0.3636); animation-timing-function: cubic-bezier(0.65,0,0.35,1); }
+    50% { transform: translate(0px,0px) scale(1,1); }
+    86.59% { transform: translate(0px,0px) scale(1,1); animation-timing-function: cubic-bezier(0.65,0,0.35,1); }
+    100% { transform: translate(0px,-162px) scale(0.6596,0.3636); }
+  }
+  @keyframes jmaMorphTitle {
+    0% { transform: translate(9px,27px) scale(0.8714,1); }
+    36.59% { transform: translate(9px,27px) scale(0.8714,1); animation-timing-function: cubic-bezier(0.65,0,0.35,1); }
+    50% { transform: translate(0px,0px) scale(1,1); }
+    86.59% { transform: translate(0px,0px) scale(1,1); animation-timing-function: cubic-bezier(0.65,0,0.35,1); }
+    100% { transform: translate(9px,27px) scale(0.8714,1); }
+  }
+  @keyframes jmaMorphSubtitle {
+    0% { transform: translate(0px,57px) scale(1.38,1); }
+    36.59% { transform: translate(0px,57px) scale(1.38,1); animation-timing-function: cubic-bezier(0.65,0,0.35,1); }
+    50% { transform: translate(0px,0px) scale(1,1); }
+    86.59% { transform: translate(0px,0px) scale(1,1); animation-timing-function: cubic-bezier(0.65,0,0.35,1); }
+    100% { transform: translate(0px,57px) scale(1.38,1); }
+  }
+  @keyframes jmaDecompose {
+    0% { opacity: 1; transform: scale(1); }
+    36.59% { opacity: 1; transform: scale(1); animation-timing-function: cubic-bezier(0.65,0,0.35,1); }
+    50% { opacity: 0; transform: scale(0.4); }
+    86.59% { opacity: 0; transform: scale(0.4); animation-timing-function: cubic-bezier(0.65,0,0.35,1); }
+    100% { opacity: 1; transform: scale(1); }
+  }
+  @keyframes jmaFragment {
+    0% { opacity: 0; transform: translate(0px,0px) scale(1); }
+    40% { opacity: 0; }
+    43.3% { opacity: 0.7; transform: translate(7px,-5px) scale(0.6); }
+    47% { opacity: 0; transform: translate(11px,-9px) scale(0.25); }
+    90% { opacity: 0; }
+    93.3% { opacity: 0.7; transform: translate(-7px,5px) scale(0.6); }
+    97% { opacity: 0; transform: translate(-11px,9px) scale(0.25); }
+    100% { opacity: 0; }
+  }
+  @keyframes jmaGlowPulse {
+    0% { opacity: 0; }
+    41.5% { opacity: 0; }
+    43.3% { opacity: 0.85; }
+    45.5% { opacity: 0; }
+    91.5% { opacity: 0; }
+    93.3% { opacity: 0.85; }
+    95.5% { opacity: 0; }
+    100% { opacity: 0; }
+  }
+  @keyframes jmaRingFade {
+    0% { opacity: 0; }
+    50% { opacity: 0; }
+    56% { opacity: 1; }
+    83% { opacity: 1; }
+    89% { opacity: 0; }
+    100% { opacity: 0; }
+  }
+</style>
+</helmet>
+<svg viewBox="0 0 300 300" width="100%" height="100%" style="display:block; overflow:visible;">
+  <rect x="15" y="15" width="270" height="270" rx="14" fill="#15151A" stroke="rgba(255,255,255,0.12)" stroke-width="1.5"></rect>
+  <line x1="15" y1="51" x2="285" y2="51" stroke="rgba(255,255,255,0.08)" stroke-width="1"></line>
+  <circle cx="33" cy="34" r="4" fill="{{ accent }}" opacity="0.9"></circle>
+  <circle cx="45" cy="34" r="4" fill="{{ accent }}" opacity="0.5"></circle>
+  <circle cx="57" cy="34" r="4" fill="{{ accent }}" opacity="0.25"></circle>
+
+  <sc-if value="{{ animate }}" hint-placeholder-val="{{ true }}">
+    <circle cx="150" cy="150" r="70" fill="{{ accent }}" style="filter:blur(18px); animation: jmaGlowPulse 8.2s ease-in-out infinite;"></circle>
+
+    <rect x="39" y="120" width="89" height="8" rx="3" fill="{{ accent }}" opacity="0.45" style="transform-origin:83.5px 124px; animation: jmaDecompose 8.2s ease-in-out infinite;"></rect>
+    <rect x="39" y="174" width="78" height="8" rx="3" fill="#EDEDF0" opacity="0.12" style="transform-origin:78px 178px; animation: jmaDecompose 8.2s ease-in-out infinite;"></rect>
+    <rect x="39" y="201" width="111" height="8" rx="3" fill="{{ accent }}" opacity="0.4" style="transform-origin:94.5px 205px; animation: jmaDecompose 8.2s ease-in-out infinite;"></rect>
+    <rect x="39" y="147" width="138" height="8" rx="3" fill="#EDEDF0" opacity="0.16" style="transform-origin:108px 151px; animation: jmaDecompose 8.2s ease-in-out infinite; animation-delay: 0.15s;"></rect>
+
+    <circle cx="128" cy="124" r="2" fill="{{ accent }}" style="transform-origin:128px 124px; animation: jmaFragment 8.2s ease-in-out infinite;"></circle>
+    <circle cx="117" cy="178" r="2" fill="#EDEDF0" style="transform-origin:117px 178px; animation: jmaFragment 8.2s ease-in-out infinite; animation-delay:0.1s;"></circle>
+    <circle cx="150" cy="205" r="2" fill="{{ accent }}" style="transform-origin:150px 205px; animation: jmaFragment 8.2s ease-in-out infinite; animation-delay:0.2s;"></circle>
+
+    <rect x="39" y="66" width="140" height="8" rx="3" fill="#EDEDF0" opacity="0.85" style="transform-origin:39px 66px; animation: jmaMorphTitle 8.2s ease-in-out infinite;"></rect>
+    <rect x="39" y="90" width="100" height="6" rx="3" fill="#EDEDF0" opacity="0.28" style="transform-origin:39px 90px; animation: jmaMorphSubtitle 8.2s ease-in-out infinite;"></rect>
+    <rect x="21" y="217" width="107" height="28.6" rx="14.3" fill="none" stroke="{{ accent }}" stroke-opacity="0.3" stroke-width="1.5" style="animation: jmaRingFade 8.2s ease-in-out infinite;"></rect>
+    <rect x="39" y="228" width="94" height="22" rx="11" fill="{{ accent }}" style="transform-origin:39px 228px; animation: jmaMorphButton 8.2s ease-in-out infinite;"></rect>
+  </sc-if>
+
+  <sc-if value="{{ animateOff }}" hint-placeholder-val="{{ false }}">
+    <rect x="39" y="66" width="140" height="8" rx="3" fill="#EDEDF0" opacity="0.85"></rect>
+    <rect x="39" y="90" width="100" height="6" rx="3" fill="#EDEDF0" opacity="0.28"></rect>
+    <rect x="21" y="217" width="107" height="28.6" rx="14.3" fill="none" stroke="{{ accent }}" stroke-opacity="0.3" stroke-width="1.5"></rect>
+    <rect x="39" y="228" width="94" height="22" rx="11" fill="{{ accent }}"></rect>
+  </sc-if>
+</svg>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;: {&quot;width&quot;: 380, &quot;height&quot;: 380}, &quot;accentColor&quot;: {&quot;editor&quot;: &quot;color&quot;, &quot;default&quot;: &quot;#7C6CFF&quot;, &quot;tsType&quot;: &quot;string&quot;, &quot;options&quot;: [&quot;#7C6CFF&quot;, &quot;#8B5CF6&quot;, &quot;#6366F1&quot;, &quot;#A78BFA&quot;], &quot;section&quot;: &quot;Apariencia&quot;}}">
+
+class Component extends DCLogic {
+  state = { animate: true };
+
+  componentDidMount() {
+    const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
+    this.setState({ animate: !mq.matches });
+  }
+
+  renderVals() {
+    const accent = this.props.accentColor ?? '#7C6CFF';
+    return { accent, animate: this.state.animate, animateOff: !this.state.animate };
+  }
+}
+
+</script>
+</body>
+</html>
