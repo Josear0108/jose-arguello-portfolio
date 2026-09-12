@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { motion } from 'framer-motion'
 import { useCursor } from '../../hooks/useCursor'
 import { useActiveSection } from '../../hooks/useActiveSection'
+import { useScrollLock } from '../../hooks/useScrollLock'
 import { navItems } from '../../data/navigation'
 import { scrollToSection, scrollToTop } from '../../hooks/scroll'
 
@@ -11,12 +12,10 @@ export function Nav() {
   const activeId = useActiveSection(navItems)
   const closeButtonRef = useRef<HTMLButtonElement>(null)
 
+  useScrollLock(menuOpen)
+
   useEffect(() => {
-    document.body.style.overflow = menuOpen ? 'hidden' : ''
     if (menuOpen) closeButtonRef.current?.focus()
-    return () => {
-      document.body.style.overflow = ''
-    }
   }, [menuOpen])
 
   useEffect(() => {
