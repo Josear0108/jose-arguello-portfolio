@@ -24,6 +24,9 @@
 
 html {
   scroll-behavior: smooth;
+  color-scheme: dark;
+  scrollbar-color: var(--color-surface-2) var(--color-bg);
+  scrollbar-width: thin;
 }
 
 body {
@@ -32,6 +35,25 @@ body {
   color: var(--color-ink);
   font-family: var(--font-sans);
   overflow-x: hidden;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-bg);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-surface-2);
+  border: 2px solid var(--color-bg);
+  border-radius: 100px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-accent);
 }
 
 ::selection {
@@ -121,6 +143,10 @@ a:focus-visible,
 
 .glow-card:hover::before {
   opacity: 1;
+}
+
+.modal-scroll {
+  scrollbar-gutter: stable;
 }
 
 .custom-cursor {
