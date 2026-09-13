@@ -29,7 +29,12 @@ export function Nav() {
 
   const handleNavClick = (sectionId: string) => {
     setMenuOpen(false)
-    scrollToSection(sectionId)
+    // Defer past the current tick so useScrollLock's cleanup effect (which
+    // unlocks the body and restores native scroll) runs first — otherwise
+    // scrollToSection computes its target while the page is still
+    // position:fixed, reading a stale window.scrollY and racing with the
+    // lock's own scroll restore.
+    window.setTimeout(() => scrollToSection(sectionId), 0)
   }
 
   return (

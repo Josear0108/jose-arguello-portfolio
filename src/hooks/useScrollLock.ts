@@ -31,7 +31,10 @@ export function useScrollLock(active: boolean) {
       body.top = ''
       body.width = ''
       body.paddingRight = ''
-      window.scrollTo(0, scrollY)
+      // 'instant' bypasses the global `scroll-behavior: smooth` — this is a
+      // silent restore, not a user-visible scroll; animating it produces a
+      // visible "snap to top, then glide back down" flash.
+      window.scrollTo({ top: scrollY, left: 0, behavior: 'instant' })
     }
   }, [active])
 }
